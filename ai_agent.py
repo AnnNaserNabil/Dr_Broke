@@ -142,13 +142,13 @@ if st.button("নিজের কাছে ফিরে আসো 💝", type="p
                         st.markdown(response.content)
 
                     with st.spinner("✍️ তোমাকে নিয়ে ভেবে যা পেলাম..."):
-                        closure_prompt = f"""User's feelings: {user_input}\nHelp write unsent messages and provide closure tips."""
+                        closure_prompt = f"""User's feelings: {user_input}\n validate the massage and provide closure tips."""
                         response = closure_agent.run(message=closure_prompt, images=all_images)
                         st.subheader("✍️ আসলে এই সময়ে যা করতে পারো")
                         st.markdown(response.content)
 
                     with st.spinner("📅 এই সময়ে যা যা করতে পারো তাই নিয়ে ভাবলাম..."):
-                        routine_prompt = f"""Based on: {user_input}\nCreate a ৭-day recovery plan."""
+                        routine_prompt = f"""Based on: {user_input}\nCreate a 7-day recovery plan."""
                         response = routine_planner_agent.run(message=routine_prompt, images=all_images)
                         st.subheader("📅 যেভাবে ফিরে আসবে")
                         st.markdown(response.content)

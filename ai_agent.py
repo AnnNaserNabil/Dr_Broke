@@ -124,7 +124,7 @@ def process_images(files) -> List[AgnoImage]:
     return processed_images
 
 # Submit button
-if st.button("নিজের কাছে ফিরে আসো 💝", type="primary"):
+if st.button(" মন ভালো করতে চাই 💝", type="primary"):
     if not api_key:
         st.error("❌ API Key missing in secrets! Please add it to `.streamlit/secrets.toml` as GEMINI_API_KEY.")
     else:

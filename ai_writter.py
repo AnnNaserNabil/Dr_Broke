@@ -1,3 +1,13 @@
+import streamlit as st
+
+# ✅ MUST BE FIRST Streamlit command
+st.set_page_config(page_title="💔 ভিঞ্চ ঘগ", page_icon="💔", layout="wide")
+
+from agno.agent import Agent
+from agno.models.google import Gemini
+from typing import Tuple
+import logging
+
 from agno.agent import Agent
 from agno.models.google import Gemini
 import streamlit as st

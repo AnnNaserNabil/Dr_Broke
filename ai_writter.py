@@ -91,10 +91,9 @@ st.markdown("### কোন সময়ে হারালে মনে হয় উ�
 st.subheader("সময় কিংবা স্থানের বাইরে চলে যেতে থাকি নিরন্তর")
 user_input = st.text_area("কেমন গল্প পড়তে চাচ্ছেন আজ?", height=150, placeholder="যে গল্পের শেষ নেই...")
 
-uploaded_files = st.file_uploader("একটা ছবি দিলে হয়ত গল্পটা আরও রঙিন হবে", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
 # Submit button
-if st.button("তবে চলুন ঘুরে আসি আজ এই ক্ষণে 💝", type="primary"):
+if st.button("ঘুরে আসি 💝", type="primary"):
     if not api_key:
         st.error("❌ API Key missing in secrets! Please add it to `.streamlit/secrets.toml` as GEMINI_API_KEY.")
     else:
@@ -105,14 +104,14 @@ if st.button("তবে চলুন ঘুরে আসি আজ এই ক্
                 try:
                     all_images = process_images(uploaded_files) if uploaded_files else []
 
-                    with st.spinner("🤗 নিয়ে আসলাম প্রথম গল্প..."):
+                    with st.spinner("🤗 প্রথম গল্প..."):
                         idea_prompt = f"""User's message: {user_input}\nProvide a story based on the response."""
                         response = idea_agent.run(message=idea_prompt, images=all_images)
                         st.subheader("🤗 শুরু করা যাক তাহলে")
                         st.markdown(response.content)
 
                     with st.spinner("✍️ দাঁড়াও দাঁড়াও দাঁড়াও..."):
-                        writer_prompt = f"""User's feelings: {user_input}\n Write a humayun ahmed style story."""
+                        writer_prompt = f"""User's feelings: {user_input}\n Write a  noir style story."""
                         response = writer_agent.run(message=writer_prompt, images=all_images)
                         st.subheader("✍️ এমন হলে কেমন হয়")
                         st.markdown(response.content)

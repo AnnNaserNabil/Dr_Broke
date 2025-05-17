@@ -1,7 +1,7 @@
 import streamlit as st
 
 # ✅ MUST be the first Streamlit command
-st.set_page_config(page_title="💔 ভিঞ্চ গখ", page_icon="💔", layout="wide")
+st.set_page_config(page_title="👩‍🎨 ভিঞ্চ গখ", page_icon="👩‍🎨", layout="wide")
 
 from agno.agent import Agent
 from agno.models.google import Gemini
@@ -84,12 +84,12 @@ def initialize_agents(api_key: str) -> tuple:
         return None, None, None
 
 # UI
-st.markdown("# 💔 ভিঞ্চ গখ")
+st.markdown("# 👩‍🎨 ভিঞ্চ গখ")
 st.markdown("###  এজেন্ট ভায়োলেট")
 st.markdown("---")
 
 # Sidebar: Developer Info
-st.sidebar.markdown("## 👨‍💻 Developer Info")
+st.sidebar.markdown("## 👨‍💻 Developed BY")
 st.sidebar.image("https://avatars.githubusercontent.com/u/16422192?s=400&u=64cc1f0c21d7b8fcb54ca59ef9fe50dcca771209&v=4", width=100)  # optional image
 
 st.sidebar.markdown("""
@@ -110,7 +110,7 @@ _"Building intelligent AI agents."_
 
 # Input field
 st.subheader("সময় কিংবা স্থানের বাইরে চলে যেতে থাকি নিরন্তর")
-user_input = st.text_area("কেমন গল্প পড়তে চাচ্ছেন আজ?", height=150, placeholder="যে গল্পের শেষ নেই...")
+user_input = st.text_area("কেমন গল্প পড়তে চান আজ?", height=150, placeholder="যে গল্পের শেষ নেই...")
 
 # Button
 if st.button("ঘুরে আসি 💝", type="primary"):

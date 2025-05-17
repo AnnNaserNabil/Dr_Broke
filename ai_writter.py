@@ -90,7 +90,7 @@ st.markdown("---")
 
 # Sidebar: Developer Info
 st.sidebar.markdown("## 👨‍💻 Developer Info")
-st.sidebar.image("https://x.com/ann_naser/photo", width=100)  # optional image
+st.sidebar.image("https://avatars.githubusercontent.com/u/16422192?s=400&u=64cc1f0c21d7b8fcb54ca59ef9fe50dcca771209&v=4", width=100)  # optional image
 
 st.sidebar.markdown("""
 **Ann Naser Nabil**  

@@ -151,6 +151,6 @@ st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: gray'>
     <p>Made with ❤️ by <b>Ann Naser Nabil</b></p>
-    <p>🎨 Be Creative Prompt Writing </p>
+    <p>🎨 Be Creative With Prompt </p>
 </div>
 """, unsafe_allow_html=True)

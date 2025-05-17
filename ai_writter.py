@@ -88,11 +88,25 @@ st.markdown("# 💔 ভিঞ্চ গখ")
 st.markdown("###  এজেন্ট ভায়োলেট")
 st.markdown("---")
 
-# Sidebar
-st.sidebar.title("🎒 আপনার সঙ্গী")
-st.sidebar.markdown("আপনি চাইলে একটি ছবি আপলোড করতে পারেন")
+# Sidebar: Developer Info
+st.sidebar.markdown("## 👨‍💻 Developer Info")
+st.sidebar.image("https://x.com/ann_naser/photo", width=100)  # optional image
 
-uploaded_files = st.sidebar.file_uploader("📷 ছবি দিন (ঐচ্ছিক)", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+st.sidebar.markdown("""
+**Ann Naser Nabil**  
+_AI Researcher & Creative Technologist_
+
+📧 [Email](mailto:ann.n.nabil@gmail.com)  
+🐙 [GitHub](https://github.com/AnnNaserNabil)  
+🔗 [LinkedIn](https://linkedin.com/in/ann-naser-nabil)  
+
+---
+
+**💬 Motto**  
+_"Building intelligent AI agents."_
+
+""", unsafe_allow_html=True)
+
 
 # Input field
 st.subheader("সময় কিংবা স্থানের বাইরে চলে যেতে থাকি নিরন্তর")
@@ -109,7 +123,7 @@ if st.button("ঘুরে আসি 💝", type="primary"):
                 try:
                     images = process_images(uploaded_files) if uploaded_files else []
 
-                    with st.spinner("🤗 প্রথম গল্প তৈরি হচ্ছে..."):
+                    with st.spinner("🤗 প্রথম গল্প ..."):
                         response = idea_agent.run(message=f"User's message: {user_input}", images=images)
                         st.subheader("🤗 শুরু করা যাক তাহলে")
                         st.markdown(response.content)
@@ -137,6 +151,6 @@ st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: gray'>
     <p>Made with ❤️ by <b>Ann Naser Nabil</b></p>
-    <p>🎨 Creative Prompt Writing Enabled</p>
+    <p>🎨 Be Creative Prompt Writing </p>
 </div>
 """, unsafe_allow_html=True)

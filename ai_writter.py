@@ -1,28 +1,34 @@
 import streamlit as st
 
-# ✅ MUST BE FIRST Streamlit command
-st.set_page_config(page_title="💔 ভিঞ্চ ঘগ", page_icon="💔", layout="wide")
+# ✅ MUST be the first Streamlit command
+st.set_page_config(page_title="💔 ভিঞ্চ গখ", page_icon="💔", layout="wide")
 
 from agno.agent import Agent
 from agno.models.google import Gemini
-from typing import Tuple
+from agno.media import Image as AgnoImage
+from typing import List
 import logging
+import tempfile
+import os
 
-from agno.agent import Agent
-from agno.models.google import Gemini
-import streamlit as st
-from typing import Tuple
-import logging
-
-# Logging setup
+# Setup logging
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
-# Get API key
+# Get API key securely
 api_key = st.secrets.get("GEMINI_API_KEY")
 
+# Dummy image processor
+def process_images(files) -> List[AgnoImage]:
+    images = []
+    for file in files:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp_file:
+            tmp_file.write(file.read())
+            images.append(AgnoImage(path=tmp_file.name))
+    return images
+
 # Agent initializer
-def initialize_agents(api_key: str) -> Tuple[Agent, Agent, Agent]:
+def initialize_agents(api_key: str) -> tuple:
     try:
         model = Gemini(id="gemini-2.0-flash-exp", api_key=api_key)
 
@@ -30,7 +36,12 @@ def initialize_agents(api_key: str) -> Tuple[Agent, Agent, Agent]:
             model=model,
             name="Idea Agent",
             instructions=[
-                "Generate a goof story, Sci-fi innovation, psychic-quantum themes.",
+                "You are a story crafter that:",
+                "1. Generate a good story",
+                "2. Make stories of Sci-fi World with new innovation",
+                "3. Bind the sci-fi quantum world with the psychic world",
+                "4. Generate a random story plot with meaning and deep emotion",
+                "5. Story of a superhero born from their own understanding of time and space",
                 "Craft stories for teenage readers who love fantasy, action, sci-fi.",
                 "গল্পটা অবশ্যই বাংলায় লিখবে।"
             ],
@@ -41,7 +52,12 @@ def initialize_agents(api_key: str) -> Tuple[Agent, Agent, Agent]:
             model=model,
             name="Writer Agent",
             instructions=[
-                "Write emotionally powerful, plot-driven stories with a real-world hook.",
+                "You are a story writer that combines:",
+                "1. Original emotions with people",
+                "2. Stir the minds of readers with plot twists",
+                "3. Write stories with progressive development",
+                "4. Connect the real world with the story’s hook",
+                "5. Build the story with a successful arc",
                 "গল্পটা অবশ্যই বাংলায় লিখবে।"
             ],
             markdown=True
@@ -51,7 +67,12 @@ def initialize_agents(api_key: str) -> Tuple[Agent, Agent, Agent]:
             model=model,
             name="Poet Agent",
             instructions=[
-                "Write imaginative, relatable poetry with surreal themes.",
+                "You are a poet that:",
+                "1. Works with poetic words",
+                "2. Writes about casual characters",
+                "3. Makes the story relatable",
+                "4. Writes with great imagination",
+                "5. Makes the reading experience engaging",
                 "গল্পটা অবশ্যই বাংলায় লিখবে।"
             ],
             markdown=True
@@ -62,99 +83,60 @@ def initialize_agents(api_key: str) -> Tuple[Agent, Agent, Agent]:
         st.error(f"Error initializing agents: {str(e)}")
         return None, None, None
 
-# 🎨 Custom CSS
-st.markdown("""
-<style>
-    body {
-        background-color: #F8F8FF;
-    }
-    .title-style {
-        font-size: 50px;
-        color: #3F51B5;
-        text-align: center;
-        font-weight: bold;
-        padding: 10px 0;
-    }
-    .section-header {
-        font-size: 24px;
-        color: #444;
-        margin-top: 30px;
-        border-left: 5px solid #FF6F61;
-        padding-left: 10px;
-    }
-    .story-box {
-        background-color: #F0F4FF;
-        padding: 20px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-    }
-    .footer {
-        text-align: center;
-        font-size: 14px;
-        color: #888;
-        margin-top: 40px;
-    }
-    .stButton>button {
-        background-color: #FF6F61;
-        color: white;
-        border-radius: 8px;
-        height: 3em;
-        font-weight: bold;
-    }
-</style>
-""", unsafe_allow_html=True)
+# UI
+st.markdown("# 💔 ভিঞ্চ গখ")
+st.markdown("###  এজেন্ট ভায়োলেট")
+st.markdown("---")
 
-# Page config
-st.set_page_config(page_title="💔 ভিঞ্চ ঘগ", page_icon="💔", layout="wide")
+# Sidebar
+st.sidebar.title("🎒 আপনার সঙ্গী")
+st.sidebar.markdown("আপনি চাইলে একটি ছবি আপলোড করতে পারেন")
 
-# 🎬 Title and Header
-st.markdown("<div class='title-style'>💔 ভিঞ্চ ঘগ</div>", unsafe_allow_html=True)
-st.markdown("### কোন সময়ে হারালে মনে হয় উড়ছি আকাশে")
+uploaded_files = st.sidebar.file_uploader("📷 ছবি দিন (ঐচ্ছিক)", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
-# 📝 Input Section
-st.markdown("<div class='section-header'>🧠 সময় কিংবা স্থানের বাইরে চলে যেতে থাকি নিরন্তর</div>", unsafe_allow_html=True)
+# Input field
+st.subheader("সময় কিংবা স্থানের বাইরে চলে যেতে থাকি নিরন্তর")
 user_input = st.text_area("কেমন গল্প পড়তে চাচ্ছেন আজ?", height=150, placeholder="যে গল্পের শেষ নেই...")
 
-# 👉 Button
-col1, col2, col3 = st.columns([1, 2, 1])
-with col2:
-    clicked = st.button("ঘুরে আসি 💝", type="primary")
-
-# 💡 Process if clicked
-if clicked:
+# Button
+if st.button("ঘুরে আসি 💝", type="primary"):
     if not api_key:
-        st.error("❌ API Key missing! Please add it to `.streamlit/secrets.toml` as GEMINI_API_KEY.")
+        st.error("❌ API Key missing! Add it to `.streamlit/secrets.toml` as GEMINI_API_KEY.")
     else:
-        agents = initialize_agents(api_key)
-        if all(agents):
-            idea_agent, writer_agent, poet_agent = agents
-            if user_input:
+        idea_agent, writer_agent, poet_agent = initialize_agents(api_key)
+        if all([idea_agent, writer_agent, poet_agent]):
+            if user_input or uploaded_files:
                 try:
-                    with st.spinner("🤗 প্রথম গল্প..."):
-                        idea_prompt = f"User's message: {user_input}\nProvide a story."
-                        idea = idea_agent.run(message=idea_prompt)
-                        st.markdown("<div class='section-header'>🤗 শুরু করা যাক তাহলে</div>", unsafe_allow_html=True)
-                        st.markdown(f"<div class='story-box'>{idea.content}</div>", unsafe_allow_html=True)
+                    images = process_images(uploaded_files) if uploaded_files else []
 
-                    with st.spinner("✍️ দাঁড়াও দাঁড়াও দাঁড়াও..."):
-                        writer_prompt = f"User's feelings: {user_input}\n Write a noir style story."
-                        written = writer_agent.run(message=writer_prompt)
-                        st.markdown("<div class='section-header'>✍️ এমন হলে কেমন হয়</div>", unsafe_allow_html=True)
-                        st.markdown(f"<div class='story-box'>{written.content}</div>", unsafe_allow_html=True)
+                    with st.spinner("🤗 প্রথম গল্প তৈরি হচ্ছে..."):
+                        response = idea_agent.run(message=f"User's message: {user_input}", images=images)
+                        st.subheader("🤗 শুরু করা যাক তাহলে")
+                        st.markdown(response.content)
 
-                    with st.spinner("📅 সাথে একটা ঝিলিমিলি কবিতা..."):
-                        poet_prompt = f"Based on: {user_input}\nWrite a surreal poem."
-                        poem = poet_agent.run(message=poet_prompt)
-                        st.markdown("<div class='section-header'>📅 কবিতার গান</div>", unsafe_allow_html=True)
-                        st.markdown(f"<div class='story-box'>{poem.content}</div>", unsafe_allow_html=True)
+                    with st.spinner("✍️ গল্প এগোচ্ছে..."):
+                        response = writer_agent.run(message=f"User's feelings: {user_input}", images=images)
+                        st.subheader("✍️ এমন হলে কেমন হয়")
+                        st.markdown(response.content)
+
+                    with st.spinner("📅 সাথে একটা কবিতা..."):
+                        response = poet_agent.run(message=f"Based on: {user_input}", images=images)
+                        st.subheader("📅 কবিতার গান")
+                        st.markdown(response.content)
 
                 except Exception as e:
-                    logger.error(f"Error: {str(e)}")
-                    st.error("⚠️ বিশ্লেষণের সময় ত্রুটি ঘটেছে।")
+                    logger.error(f"Processing error: {str(e)}")
+                    st.error("⚠️ বিশ্লেষণের সময় ত্রুটি ঘটেছে। লগ চেক করুন।")
             else:
-                st.warning("অনুগ্রহ করে আপনার অনুভূতি লিখুন।")
+                st.warning("অনুগ্রহ করে অনুভূতি লিখুন বা ছবি দিন।")
         else:
-            st.error("⚠️ Agent গুলো ঠিকমতো চালু হয়নি। API key চেক করুন।")
+            st.error("⚠️ Agent গুলো চালু হয়নি। API key সঠিক কিনা দেখুন।")
 
-# 🎉 Footer
-st.markdown("<div class='footer'>Made with ❤️ by Ann Naser Nabil | 🎨 Be Creative With Prompt</div>", unsafe_allow_html=True)
+# Footer
+st.markdown("---")
+st.markdown("""
+<div style='text-align: center; color: gray'>
+    <p>Made with ❤️ by <b>Ann Naser Nabil</b></p>
+    <p>🎨 Creative Prompt Writing Enabled</p>
+</div>
+""", unsafe_allow_html=True)

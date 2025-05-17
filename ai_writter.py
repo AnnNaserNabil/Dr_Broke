@@ -68,27 +68,8 @@ def initialize_agents(api_key: str) -> tuple[Agent, Agent, Agent, Agent]:
         )
 
 
-"""
-       ``` packaging_agent = Agent(
-            model=model,
-            name="Packaging Agent",
-            tools=[DuckDuckGoTools()],
-            instructions=[
-                "You are a direct feedback specialist that:",
-                "1. Gives raw, objective feedback about breakups",
-                "2. Explains relationship failures clearly",
-                "3. Uses blunt, factual language",
-                "4. Provides reasons to move forward",
-                "Focus on honest insights without sugar-coating"
-                "উত্তর সবসময় বাংলা ভাষায় হওয়া উচিত। কোনো ধরনের সাজসজ্জা বা চিনি মেশানো কথা নয়।"
-            ],
-            markdown=True
-        )
 
-"""
-
-
-        return therapist_agent, closure_agent, routine_planner_agent, brutal_honesty_agent
+        return idea_agent, writer_agent, poet_agent
     except Exception as e:
         st.error(f"Error initializing agents: {str(e)}")
         return None, None, None, None
@@ -135,34 +116,30 @@ if st.button(" মন ভালো করতে চাই 💝", type="primary")
     else:
         agents = initialize_agents(api_key)
         if all(agents):
-            therapist_agent, closure_agent, routine_planner_agent, brutal_honesty_agent = agents
+            idea_agent, writer_agent, poet_agent = agents
             if user_input or uploaded_files:
                 try:
                     all_images = process_images(uploaded_files) if uploaded_files else []
 
                     with st.spinner("🤗 তোমাকে নিয়ে ভাবছি..."):
-                        therapist_prompt = f"""User's message: {user_input}\nProvide a compassionate response."""
-                        response = therapist_agent.run(message=therapist_prompt, images=all_images)
+                        therapist_prompt = f"""User's message: {user_input}\nProvide a story based on the response."""
+                        response = idea_agent.run(message=therapist_prompt, images=all_images)
                         st.subheader("🤗 তোমার কথা শুনে যা বুঝলাম")
                         st.markdown(response.content)
 
                     with st.spinner("✍️ তোমাকে নিয়ে ভেবে যা পেলাম..."):
                         closure_prompt = f"""User's feelings: {user_input}\n validate the massage and provide closure tips."""
-                        response = closure_agent.run(message=closure_prompt, images=all_images)
+                        response = writer_agent.run(message=closure_prompt, images=all_images)
                         st.subheader("✍️ আসলে এই সময়ে যা করতে পারো")
                         st.markdown(response.content)
 
                     with st.spinner("📅 এই সময়ে যা যা করতে পারো তাই নিয়ে ভাবলাম..."):
                         routine_prompt = f"""Based on: {user_input}\nCreate a 7-day recovery plan."""
-                        response = routine_planner_agent.run(message=routine_prompt, images=all_images)
+                        response = poet_agent.run(message=routine_prompt, images=all_images)
                         st.subheader("📅 যেভাবে ফিরে আসবে")
                         st.markdown(response.content)
 
-                    with st.spinner("💪 একটা বাস্তবসম্মত প্ল্যান দিচ্ছি..."):
-                        honesty_prompt = f"""Situation: {user_input}\nGive brutally honest but constructive advice."""
-                        response = brutal_honesty_agent.run(message=honesty_prompt, images=all_images)
-                        st.subheader("💪 মন খারাপ না করে হাসো ")
-                        st.markdown(response.content)
+                 
 
                 except Exception as e:
                     logger.error(f"Error during analysis: {str(e)}")

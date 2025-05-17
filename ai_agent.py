@@ -99,7 +99,7 @@ st.markdown("### মন খারাপ? নিজের কথা বলো শ
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("মনের কথা লিখুন")
+    st.subheader("মনের কথা লিখে জানাও")
     user_input = st.text_area("কেমন আছো? কি হয়েছে আজ?", height=150, placeholder="আমাকে জানাতে পারো...")
 
 with col2:

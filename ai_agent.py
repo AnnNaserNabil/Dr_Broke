@@ -1,4 +1,4 @@
-from agno.agent import Agent
+উপfrom agno.agent import Agent
 from agno.models.google import Gemini
 from agno.media import Image as AgnoImage
 from agno.tools.duckduckgo import DuckDuckGoTools
@@ -172,6 +172,6 @@ st.markdown("---")
 st.markdown("""
     <div style='text-align: center'>
         <p>Made with ❤️ by Ann Naser Nabil</p>
-        <p>Heal thyself</p>
+        <p>Heal thyself my love</p>
     </div>
 """, unsafe_allow_html=True)

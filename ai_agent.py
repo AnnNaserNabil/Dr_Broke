@@ -1,4 +1,4 @@
-উপfrom agno.agent import Agent
+from agno.agent import Agent
 from agno.models.google import Gemini
 from agno.media import Image as AgnoImage
 from agno.tools.duckduckgo import DuckDuckGoTools

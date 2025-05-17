@@ -1,13 +1,8 @@
 from agno.agent import Agent
 from agno.models.google import Gemini
-from agno.media import Image as AgnoImage
-from agno.tools.duckduckgo import DuckDuckGoTools
 import streamlit as st
-from typing import List
+from typing import Tuple
 import logging
-from pathlib import Path
-import tempfile
-import os
 
 # Configure logging
 logging.basicConfig(level=logging.ERROR)
@@ -16,17 +11,8 @@ logger = logging.getLogger(__name__)
 # Get API key from Streamlit secrets
 api_key = st.secrets.get("GEMINI_API_KEY")
 
-# Dummy image processor (optional enhancement)
-def process_images(files) -> List[AgnoImage]:
-    images = []
-    for file in files:
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp_file:
-            tmp_file.write(file.read())
-            images.append(AgnoImage(path=tmp_file.name))
-    return images
-
 # Agent initializer
-def initialize_agents(api_key: str) -> tuple:
+def initialize_agents(api_key: str) -> Tuple[Agent, Agent, Agent]:
     try:
         model = Gemini(id="gemini-2.0-flash-exp", api_key=api_key)
 
@@ -91,7 +77,6 @@ st.markdown("### কোন সময়ে হারালে মনে হয় উ�
 st.subheader("সময় কিংবা স্থানের বাইরে চলে যেতে থাকি নিরন্তর")
 user_input = st.text_area("কেমন গল্প পড়তে চাচ্ছেন আজ?", height=150, placeholder="যে গল্পের শেষ নেই...")
 
-
 # Submit button
 if st.button("ঘুরে আসি 💝", type="primary"):
     if not api_key:
@@ -100,25 +85,23 @@ if st.button("ঘুরে আসি 💝", type="primary"):
         agents = initialize_agents(api_key)
         if all(agents):
             idea_agent, writer_agent, poet_agent = agents
-            if user_input or uploaded_files:
+            if user_input:
                 try:
-                    all_images = process_images(uploaded_files) if uploaded_files else []
-
                     with st.spinner("🤗 প্রথম গল্প..."):
                         idea_prompt = f"""User's message: {user_input}\nProvide a story based on the response."""
-                        response = idea_agent.run(message=idea_prompt, images=all_images)
+                        response = idea_agent.run(message=idea_prompt)
                         st.subheader("🤗 শুরু করা যাক তাহলে")
                         st.markdown(response.content)
 
                     with st.spinner("✍️ দাঁড়াও দাঁড়াও দাঁড়াও..."):
-                        writer_prompt = f"""User's feelings: {user_input}\n Write a  noir style story."""
-                        response = writer_agent.run(message=writer_prompt, images=all_images)
+                        writer_prompt = f"""User's feelings: {user_input}\n Write a noir style story."""
+                        response = writer_agent.run(message=writer_prompt)
                         st.subheader("✍️ এমন হলে কেমন হয়")
                         st.markdown(response.content)
 
-                    with st.spinner("📅 সাথে একটা ঝিলিমিলি কবিতা..."):
+                    with st.spinner("📅 সাথে একটা  কবিতা..."):
                         poet_prompt = f"""Based on: {user_input}\nWrite some poetry that are surreal."""
-                        response = poet_agent.run(message=poet_prompt, images=all_images)
+                        response = poet_agent.run(message=poet_prompt)
                         st.subheader("📅 কবিতার গান")
                         st.markdown(response.content)
 
@@ -126,7 +109,7 @@ if st.button("ঘুরে আসি 💝", type="primary"):
                     logger.error(f"Error during analysis: {str(e)}")
                     st.error("⚠️ বিশ্লেষণের সময় ত্রুটি ঘটেছে। অনুগ্রহ করে লগ চেক করুন।")
             else:
-                st.warning("অনুগ্রহ করে আপনার অনুভূতি লিখুন অথবা ছবি দিন।")
+                st.warning("অনুগ্রহ করে আপনার অনুভূতি লিখুন।")
         else:
             st.error("⚠️ Agent গুলো ঠিকমতো চালু হয়নি। API key চেক করুন।")
 

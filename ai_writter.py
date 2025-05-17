@@ -112,13 +112,13 @@ if st.button("তবে চলুন ঘুরে আসি আজ এই ক্
                         st.markdown(response.content)
 
                     with st.spinner("✍️ দাঁড়াও দাঁড়াও দাঁড়াও..."):
-                        writer_prompt = f"""User's feelings: {user_input}\nWrite another ending of the previous story."""
+                        writer_prompt = f"""User's feelings: {user_input}\n Write a humayun ahmed style story."""
                         response = writer_agent.run(message=writer_prompt, images=all_images)
                         st.subheader("✍️ এমন হলে কেমন হয়")
                         st.markdown(response.content)
 
                     with st.spinner("📅 সাথে একটা ঝিলিমিলি কবিতা..."):
-                        poet_prompt = f"""Based on: {user_input}\nWrite some poetry."""
+                        poet_prompt = f"""Based on: {user_input}\nWrite some poetry that are surreal."""
                         response = poet_agent.run(message=poet_prompt, images=all_images)
                         st.subheader("📅 কবিতার গান")
                         st.markdown(response.content)

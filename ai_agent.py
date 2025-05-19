@@ -42,9 +42,9 @@ def initialize_agents(api_key: str) -> tuple[Agent, Agent, Agent, Agent]:
             name="Closure Agent",
             instructions=[
                 "You are a closure specialist that:",
-                "1. gives an emotional messages for validating and healing feelings",
+                "1. gives an emotional messages for validating the feelings",
                 "2. Helps express raw, honest emotions",
-                "3. Formats the messages clearly with headers",
+                "3. Formats the messages clearly",
                 "4. Ensures tone is heartfelt and authentic",
                 "Focus on emotional release and closure"
                 "উত্তর অবশ্যই বাংলা ভাষায় দেবে ,আন্তরিকতা বজায় রেখো।"

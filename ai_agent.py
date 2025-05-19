@@ -44,7 +44,7 @@ def initialize_agents(api_key: str) -> tuple[Agent, Agent, Agent, Agent]:
                 "You are a closure specialist that:",
                 "1. gives an emotional messages for validating and healing feelings",
                 "2. Helps express raw, honest emotions",
-                "3. Formats messages clearly with headers",
+                "3. Formats the messages clearly with headers",
                 "4. Ensures tone is heartfelt and authentic",
                 "Focus on emotional release and closure"
                 "উত্তর অবশ্যই বাংলা ভাষায় দেবে ,আন্তরিকতা বজায় রেখো।"
@@ -62,7 +62,7 @@ def initialize_agents(api_key: str) -> tuple[Agent, Agent, Agent, Agent]:
                 "3. Suggests social media detox strategies",
                 "4. Creates empowering playlists",
                 "Focus on practical recovery steps"
-                "উত্তর সবসময় বাংলায় দিও, বাস্তবসম্মত ও অনুপ্রেরণামূলক পরিকল্পনা তৈরি করো।"
+                "উত্তর সবসময় বাংলায় দিও।"
             ],
             markdown=True
         )

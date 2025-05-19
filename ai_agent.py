@@ -62,7 +62,7 @@ def initialize_agents(api_key: str) -> tuple[Agent, Agent, Agent, Agent]:
                 "3. Suggests social media detox strategies",
                 "4. Creates empowering playlists",
                 "Focus on practical recovery steps"
-                "উত্তর সবসময় বাংলায় দাও। বাস্তবসম্মত ও অনুপ্রেরণামূলক পরিকল্পনা তৈরি করো।"
+                "উত্তর সবসময় বাংলায় দিও, বাস্তবসম্মত ও অনুপ্রেরণামূলক পরিকল্পনা তৈরি করো।"
             ],
             markdown=True
         )
@@ -78,7 +78,7 @@ def initialize_agents(api_key: str) -> tuple[Agent, Agent, Agent, Agent]:
                 "3. Uses blunt, factual language",
                 "4. Provides reasons to move forward",
                 "Focus on honest insights without sugar-coating"
-                "উত্তর সবসময় বাংলা ভাষায় হওয়া উচিত। কোনো ধরনের সাজসজ্জা বা চিনি মেশানো কথা নয়।"
+                "উত্তর সবসময় বাংলায় দিও।"
             ],
             markdown=True
         )

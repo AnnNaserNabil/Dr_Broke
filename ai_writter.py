@@ -76,7 +76,7 @@ def initialize_agents(api_key: str) -> tuple:
 
 # UI
 st.markdown("# 👩‍🎨 ভিঞ্চ গখ")
-st.markdown("###  এজেন্ট ভায়োলেট")
+st.markdown("### রাইটার এজেন্ট")
 st.markdown("---")
 
 # Sidebar: Developer Info
@@ -98,7 +98,7 @@ _"Building intelligent AI agents."_
 """, unsafe_allow_html=True)
 
 # Input field
-st.subheader("সময় কিংবা স্থানের বাইরে চলে যেতে থাকি নিরন্তর")
+st.subheader("আমি গল্প বলি সময়ের")
 user_input = st.text_area("কেমন গল্প পড়তে চান আজ?", height=150, placeholder="যে গল্পের শেষ নেই...")
 
 # Button

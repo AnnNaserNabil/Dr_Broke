@@ -37,11 +37,11 @@ def initialize_agents(api_key: str) -> tuple:
             name="Idea Agent",
             instructions=[
                 "You are a story crafter that:",
-                "1. Generate a good story",
-                "2. Make stories of Sci-fi World with new innovation",
-                "3. Bind the sci-fi quantum world with the psychic world",
+                "1. Generate a good plot based  story",
+                "2. Make story of related gener",
+                "3. Bind the story with sci fi world",
                 "4. Generate a random story plot with meaning and deep emotion",
-                "5. Story of a superhero born from their own understanding of time and space",
+                "5. Story of a something new",
                 "Craft stories for teenage readers who love fantasy, action, sci-fi.",
                 "গল্পটা অবশ্যই বাংলায় লিখবে।"
             ],

@@ -42,7 +42,7 @@ def initialize_agents(api_key: str) -> tuple[Agent, Agent, Agent, Agent]:
             name="Closure Agent",
             instructions=[
                 "You are a closure specialist that:",
-                "1. Creates emotional messages for unsent feelings",
+                "1. gives an emotional messages for validating and healing feelings",
                 "2. Helps express raw, honest emotions",
                 "3. Formats messages clearly with headers",
                 "4. Ensures tone is heartfelt and authentic",
@@ -73,8 +73,8 @@ def initialize_agents(api_key: str) -> tuple[Agent, Agent, Agent, Agent]:
             tools=[DuckDuckGoTools()],
             instructions=[
                 "You are a direct feedback specialist that:",
-                "1. Gives raw, objective feedback about breakups",
-                "2. Explains relationship failures clearly",
+                "1. Gives raw, objective feedback about the issue",
+                "2. Explains the issue clearly clearly",
                 "3. Uses blunt, factual language",
                 "4. Provides reasons to move forward",
                 "Focus on honest insights without sugar-coating"
@@ -156,7 +156,7 @@ if st.button(" মন ভালো করতে চাই 💝", type="primary")
                     with st.spinner("💪 একটা বাস্তবসম্মত প্ল্যান দিচ্ছি..."):
                         honesty_prompt = f"""Situation: {user_input}\nGive brutally honest but constructive advice."""
                         response = brutal_honesty_agent.run(message=honesty_prompt, images=all_images)
-                        st.subheader("💪 মন খারাপ না করে হাসো ")
+                        st.subheader("💪 মন খারাপ না করে নিজেকে গুছিয়ে নাও ")
                         st.markdown(response.content)
 
                 except Exception as e:

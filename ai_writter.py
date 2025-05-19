@@ -119,10 +119,7 @@ if st.button("ঘুরে আসি 💝", type="primary"):
     else:
         idea_agent, writer_agent, poet_agent = initialize_agents(api_key)
         if all([idea_agent, writer_agent, poet_agent]):
-            if user_input or uploaded_files:
-                try:
-                    images = process_images(uploaded_files) if uploaded_files else []
-
+            
                     with st.spinner("🤗 প্রথম গল্প ..."):
                         response = idea_agent.run(message=f"User's message: {user_input}", images=images)
                         st.subheader("🤗 শুরু করা যাক তাহলে")

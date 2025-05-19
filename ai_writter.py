@@ -18,14 +18,6 @@ logger = logging.getLogger(__name__)
 # Get API key securely
 api_key = st.secrets.get("GEMINI_API_KEY")
 
-# Dummy image processor
-def process_images(files) -> List[AgnoImage]:
-    images = []
-    for file in files:
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp_file:
-            tmp_file.write(file.read())
-            images.append(AgnoImage(path=tmp_file.name))
-    return images
 
 # Agent initializer
 def initialize_agents(api_key: str) -> tuple:

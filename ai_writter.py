@@ -28,7 +28,7 @@ def initialize_agents(api_key: str) -> tuple:
             name="Idea Agent",
             instructions=[
                 "You are a story crafter that:",
-                "1. Generate a good plot based story",
+                "1. Generate a good plot based story without intro",
                 "2. Make story of related genre",
                 "3. Bind the story with sci-fi world",
                 "4. Generate a random story plot with meaning and deep emotion",
@@ -49,7 +49,7 @@ def initialize_agents(api_key: str) -> tuple:
                 "3. Write stories with progressive development",
                 "4. Connect the real world with the story’s hook",
                 "5. Build the story with a successful arc",
-                "গল্পটা অবশ্যই বাংলায় লিখবে।"
+                "গল্পটা অবশ্যই বাংলায় লিখবে কোনো রকম ইন্ট্রো ছাড়া।"
             ],
             markdown=True
         )

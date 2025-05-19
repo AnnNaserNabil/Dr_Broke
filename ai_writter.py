@@ -34,7 +34,7 @@ def initialize_agents(api_key: str) -> tuple:
                 "4. Generate a random story plot with meaning and deep emotion",
                 "5. Story of something new",
                 "Craft stories for teenage readers who love fantasy, action, sci-fi.",
-                "গল্পটা অবশ্যই বাংলায় লিখবে।"
+                "গল্পটা অবশ্যই বাংলায় লিখবে। মডার্ন ন্যারেটিভে, নামের ক্ষেত্রে জনপ্রিয় নাম ব্যাবহার করতে পারো"
             ],
             markdown=True
         )
@@ -43,12 +43,12 @@ def initialize_agents(api_key: str) -> tuple:
             model=model,
             name="Writer Agent",
             instructions=[
-                "You are a story writer that combines:",
+                "You are a short story writer that combines:",
                 "1. Original emotions with people",
                 "2. Stir the minds of readers with plot twists",
                 "3. Write stories with progressive development",
                 "4. Connect the real world with the story’s hook",
-                "5. Build the story with a successful arc",
+                "5. Build the story with a successful arc and ending",
                 "গল্পটা অবশ্যই বাংলায় লিখবে কোনো রকম ইন্ট্রো ছাড়া।"
             ],
             markdown=True
@@ -80,7 +80,7 @@ st.markdown("### রাইটার এজেন্ট")
 st.markdown("---")
 
 # Sidebar: Developer Info
-st.sidebar.markdown("## 👨‍💻 Developed BY")
+st.sidebar.markdown("## 👨‍💻 Developed By")
 st.sidebar.image("https://avatars.githubusercontent.com/u/16422192?s=400&u=64cc1f0c21d7b8fcb54ca59ef9fe50dcca771209&v=4", width=100)
 
 st.sidebar.markdown("""
@@ -98,11 +98,11 @@ _"Building intelligent AI agents."_
 """, unsafe_allow_html=True)
 
 # Input field
-st.subheader("আমি গল্প বলি সময়ের")
+st.subheader("আমি গল্প বলি সময়েরর শেষ দিকের")
 user_input = st.text_area("কেমন গল্প পড়তে চান আজ?", height=150, placeholder="যে গল্পের শেষ নেই...")
 
 # Button
-if st.button("ঘুরে আসি 💝", type="primary"):
+if st.button("গল্প শোনাও 💝", type="primary"):
     if not api_key:
         st.error("❌ API Key missing! Add it to `.streamlit/secrets.toml` as GEMINI_API_KEY.")
     elif not user_input.strip():
@@ -113,12 +113,12 @@ if st.button("ঘুরে আসি 💝", type="primary"):
             try:
                 images = []  # Define empty list for now unless you plan to add image input later
 
-                with st.spinner("🤗 প্রথম গল্প ..."):
+                with st.spinner("🤗 এটা প্রথম গল্প ..."):
                     response = idea_agent.run(message=f"User's message: {user_input}", images=images)
                     st.subheader("🤗 শুরু করা যাক তাহলে")
                     st.markdown(response.content)
 
-                with st.spinner("✍️ গল্প এগোচ্ছে..."):
+                with st.spinner("✍️ গল্প এগোচ্ছে অন্য কোথাও..."):
                     response = writer_agent.run(message=f"User's feelings: {user_input}", images=images)
                     st.subheader("✍️ এমন হলে কেমন হয়")
                     st.markdown(response.content)

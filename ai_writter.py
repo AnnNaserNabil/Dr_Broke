@@ -18,7 +18,6 @@ logger = logging.getLogger(__name__)
 # Get API key securely
 api_key = st.secrets.get("GEMINI_API_KEY")
 
-
 # Agent initializer
 def initialize_agents(api_key: str) -> tuple:
     try:
@@ -29,11 +28,11 @@ def initialize_agents(api_key: str) -> tuple:
             name="Idea Agent",
             instructions=[
                 "You are a story crafter that:",
-                "1. Generate a good plot based  story",
-                "2. Make story of related gener",
-                "3. Bind the story with sci fi world",
+                "1. Generate a good plot based story",
+                "2. Make story of related genre",
+                "3. Bind the story with sci-fi world",
                 "4. Generate a random story plot with meaning and deep emotion",
-                "5. Story of a something new",
+                "5. Story of something new",
                 "Craft stories for teenage readers who love fantasy, action, sci-fi.",
                 "গল্পটা অবশ্যই বাংলায় লিখবে।"
             ],
@@ -82,7 +81,7 @@ st.markdown("---")
 
 # Sidebar: Developer Info
 st.sidebar.markdown("## 👨‍💻 Developed BY")
-st.sidebar.image("https://avatars.githubusercontent.com/u/16422192?s=400&u=64cc1f0c21d7b8fcb54ca59ef9fe50dcca771209&v=4", width=100)  # optional image
+st.sidebar.image("https://avatars.githubusercontent.com/u/16422192?s=400&u=64cc1f0c21d7b8fcb54ca59ef9fe50dcca771209&v=4", width=100)
 
 st.sidebar.markdown("""
 **Ann Naser Nabil**  
@@ -96,9 +95,7 @@ _AI Researcher & Creative Technologist_
 
 **💬 Motto**  
 _"Building intelligent AI agents."_
-
 """, unsafe_allow_html=True)
-
 
 # Input field
 st.subheader("সময় কিংবা স্থানের বাইরে চলে যেতে থাকি নিরন্তর")
@@ -108,30 +105,32 @@ user_input = st.text_area("কেমন গল্প পড়তে চান আ�
 if st.button("ঘুরে আসি 💝", type="primary"):
     if not api_key:
         st.error("❌ API Key missing! Add it to `.streamlit/secrets.toml` as GEMINI_API_KEY.")
+    elif not user_input.strip():
+        st.warning("অনুগ্রহ করে অনুভূতি লিখুন।")
     else:
         idea_agent, writer_agent, poet_agent = initialize_agents(api_key)
         if all([idea_agent, writer_agent, poet_agent]):
-            
-                    with st.spinner("🤗 প্রথম গল্প ..."):
-                        response = idea_agent.run(message=f"User's message: {user_input}", images=images)
-                        st.subheader("🤗 শুরু করা যাক তাহলে")
-                        st.markdown(response.content)
+            try:
+                images = []  # Define empty list for now unless you plan to add image input later
 
-                    with st.spinner("✍️ গল্প এগোচ্ছে..."):
-                        response = writer_agent.run(message=f"User's feelings: {user_input}", images=images)
-                        st.subheader("✍️ এমন হলে কেমন হয়")
-                        st.markdown(response.content)
+                with st.spinner("🤗 প্রথম গল্প ..."):
+                    response = idea_agent.run(message=f"User's message: {user_input}", images=images)
+                    st.subheader("🤗 শুরু করা যাক তাহলে")
+                    st.markdown(response.content)
 
-                    with st.spinner("📅 সাথে একটা কবিতা..."):
-                        response = poet_agent.run(message=f"Based on: {user_input}", images=images)
-                        st.subheader("📅 কবিতার গান")
-                        st.markdown(response.content)
+                with st.spinner("✍️ গল্প এগোচ্ছে..."):
+                    response = writer_agent.run(message=f"User's feelings: {user_input}", images=images)
+                    st.subheader("✍️ এমন হলে কেমন হয়")
+                    st.markdown(response.content)
 
-                except Exception as e:
-                    logger.error(f"Processing error: {str(e)}")
-                    st.error("⚠️ বিশ্লেষণের সময় ত্রুটি ঘটেছে। লগ চেক করুন।")
-            else:
-                st.warning("অনুগ্রহ করে অনুভূতি লিখুন বা ছবি দিন।")
+                with st.spinner("📅 সাথে একটা কবিতা..."):
+                    response = poet_agent.run(message=f"Based on: {user_input}", images=images)
+                    st.subheader("📅 কবিতার গান")
+                    st.markdown(response.content)
+
+            except Exception as e:
+                logger.error(f"Processing error: {str(e)}")
+                st.error("⚠️ বিশ্লেষণের সময় ত্রুটি ঘটেছে। লগ চেক করুন।")
         else:
             st.error("⚠️ Agent গুলো চালু হয়নি। API key সঠিক কিনা দেখুন।")
 

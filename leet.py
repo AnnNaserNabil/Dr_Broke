@@ -1,7 +1,7 @@
 import streamlit as st
 
 # ✅ MUST be the first Streamlit command
-st.set_page_config(page_title="🧠 LeetCode Solver", page_icon="🧠", layout="wide")
+st.set_page_config(page_title="🧠 LeetCode Master", page_icon="🧠", layout="wide")
 
 from agno.agent import Agent
 from agno.models.google import Gemini
@@ -33,7 +33,7 @@ def initialize_agents(api_key: str) -> tuple:
                 "3. Extracts key constraints and requirements",
                 "4. Identifies edge cases to consider",
                 "5. Determines the expected time/space complexity",
-                "Always respond in Bengali and English mixed format for better understanding.",
+                "Always respond in clear English for better understanding.",
                 "Start with a brief summary, then provide detailed analysis."
             ],
             markdown=True
@@ -49,7 +49,7 @@ def initialize_agents(api_key: str) -> tuple:
                 "3. Provide step-by-step walkthrough of examples",
                 "4. Explain why certain approaches work better than others",
                 "5. Help users understand the intuition behind the solution",
-                "Use a mix of Bengali and English for clarity.",
+                "Use clear English throughout your explanations.",
                 "Focus on building conceptual understanding, not just code."
             ],
             markdown=True
@@ -65,7 +65,7 @@ def initialize_agents(api_key: str) -> tuple:
                 "3. Explain time and space complexity for each approach",
                 "4. Show the evolution of thinking from naive to optimal",
                 "5. Include code snippets with detailed explanations",
-                "Code comments should be in English, explanations in Bengali-English mix.",
+                "All explanations and code comments should be in English.",
                 "Always provide at least 2-3 different approaches when possible."
             ],
             markdown=True
@@ -82,7 +82,7 @@ def initialize_agents(api_key: str) -> tuple:
                 "4. Give advice on how to approach unknown problems",
                 "5. Provide tips for interview preparation and competitive programming",
                 "6. Share insights on recognizing problem patterns",
-                "Mix Bengali and English for better connection with learners.",
+                "Use clear English throughout for better understanding.",
                 "Focus on developing algorithmic thinking and problem-solving intuition."
             ],
             markdown=True
@@ -94,7 +94,7 @@ def initialize_agents(api_key: str) -> tuple:
         return None, None, None, None
 
 # UI
-st.markdown("# 🧠 LeetCode Solver")
+st.markdown("# 🧠 LeetCode Master")
 st.markdown("### Advanced Problem Solving Assistant")
 st.markdown("---")
 
@@ -133,9 +133,9 @@ st.sidebar.markdown("""
 """)
 
 # Input field
-st.subheader("LeetCode Problem দাও, সমাধান নিয়ে যাও")
+st.subheader("Submit Your LeetCode Problem & Get Complete Solution")
 user_input = st.text_area(
-    "LeetCode problem statement পেস্ট করুন:", 
+    "Paste your LeetCode problem statement here:", 
     height=200, 
     placeholder="""Example:
 Two Sum
@@ -159,11 +159,11 @@ with col2:
     preferred_language = st.selectbox("Preferred Language:", ["Python", "Java", "C++", "JavaScript"])
 
 # Button
-if st.button("Solve করো 🚀", type="primary"):
+if st.button("🚀 Solve This Problem", type="primary"):
     if not api_key:
         st.error("❌ API Key missing! Add it to `.streamlit/secrets.toml` as GEMINI_API_KEY.")
     elif not user_input.strip():
-        st.warning("অনুগ্রহ করে LeetCode problem statement দিন।")
+        st.warning("Please provide a LeetCode problem statement.")
     else:
         problem_analyzer, problem_explainer, solution_architect, problem_solver_mentor = initialize_agents(api_key)
         if all([problem_analyzer, problem_explainer, solution_architect, problem_solver_mentor]):
@@ -171,37 +171,37 @@ if st.button("Solve করো 🚀", type="primary"):
                 problem_context = f"Problem: {user_input}\nDifficulty: {difficulty}\nPreferred Language: {preferred_language}"
 
                 # Problem Analysis Phase
-                with st.spinner("🔍 Problem analyze করছি..."):
+                with st.spinner("🔍 Analyzing the problem..."):
                     response = problem_analyzer.run(message=problem_context)
                     st.subheader("🔍 Problem Analysis")
                     st.markdown(response.content)
                     st.markdown("---")
 
                 # Problem Explanation Phase
-                with st.spinner("📖 Problem explain করছি..."):
+                with st.spinner("📖 Explaining the problem in depth..."):
                     response = problem_explainer.run(message=f"Explain this problem in depth: {problem_context}")
                     st.subheader("📖 Deep Problem Understanding")
                     st.markdown(response.content)
                     st.markdown("---")
 
                 # Solution Architecture Phase
-                with st.spinner("💻 Multiple solutions তৈরি করছি..."):
+                with st.spinner("💻 Creating multiple solutions..."):
                     response = solution_architect.run(message=f"Provide multiple solution approaches for: {problem_context}")
                     st.subheader("💻 Solution Approaches")
                     st.markdown(response.content)
                     st.markdown("---")
 
                 # Problem Solving Mentorship Phase
-                with st.spinner("🧠 Problem solving strategies দিচ্ছি..."):
+                with st.spinner("🧠 Sharing problem-solving strategies..."):
                     response = problem_solver_mentor.run(message=f"Provide problem-solving insights and strategies for: {problem_context}")
                     st.subheader("🧠 Problem Solver's Mindset")
                     st.markdown(response.content)
 
             except Exception as e:
                 logger.error(f"Processing error: {str(e)}")
-                st.error("⚠️ Analysis এর সময় ত্রুটি ঘটেছে। দয়া করে আবার চেষ্টা করুন।")
+                st.error("⚠️ An error occurred during analysis. Please try again.")
         else:
-            st.error("⚠️ Agent গুলো initialize হয়নি। API key সঠিক কিনা দেখুন।")
+            st.error("⚠️ Agents failed to initialize. Please check your API key.")
 
 # Tips section
 st.markdown("---")

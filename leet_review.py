@@ -76,12 +76,28 @@ def initialize_evaluator_agents(api_key: str) -> tuple:
             markdown=True
         )
 
-        return code_evaluator, code_judge, code_critic, code_improver
+        code_explainer = Agent(
+            model=model,
+            name="Code Explainer",
+            instructions=[
+                "You are a detailed technical explainer of code logic and structure.",
+                "Go through the code line by line, explaining what each part does.",
+                "Break down all functions, control flows, loops, conditions, and data structures used.",
+                "Your explanation must be thorough and educational, like a senior engineer mentoring a junior.",
+                "Respond in markdown using this format:",
+                "### 🔎 Code Walkthrough\nExplain what happens from the start to the end, including all helper functions.",
+                "### ⚙️ Function Breakdown\nFor each function, explain parameters, return value, and role in the solution.",
+                "### 📊 Data Structures Used\nMention the data structures used, why they were chosen, and how they impact performance.",
+                "Be precise and technical, avoid oversimplifying. Use code snippets where needed to clarify."
+            ],
+            markdown=True
+        )
+
+        return code_evaluator, code_judge, code_critic, code_improver, code_explainer
 
     except Exception as e:
         st.error(f"Error initializing agents: {str(e)}")
-        return None, None, None, None
-
+        return None, None, None, None, None
 
 
 # Sidebar
@@ -117,9 +133,9 @@ if st.button("🚀 Review My Code", type="primary"):
     elif not user_problem or not user_code:
         st.warning("Please provide both the problem statement and your code.")
     else:
-        code_evaluator, code_judge, code_critic, code_improver = initialize_evaluator_agents(api_key)
+        code_evaluator, code_judge, code_critic, code_improver, code_explainer = initialize_evaluator_agents(api_key)
 
-        if all([code_evaluator, code_judge, code_critic, code_improver]):
+        if all([code_evaluator, code_judge, code_critic, code_improver, code_explainer]):
             full_context = f"Problem:\n{user_problem}\n\nCode:\n```{language}\n{user_code}\n```"
 
             with st.spinner("🔍 Evaluating Code..."):
@@ -141,6 +157,12 @@ if st.button("🚀 Review My Code", type="primary"):
                 improve_response = code_improver.run(message=full_context)
                 st.subheader("🚀 Improved Solution")
                 st.markdown(improve_response.content)
+
+            with st.spinner("📖 Explaining Code..."):
+                explainer_response = code_explainer.run(message=full_context)
+                st.subheader("📖 Code Explanation")
+                st.markdown(explainer_response.content)
+
         else:
             st.error("⚠️ Failed to initialize agents. Please check your configuration.")
 

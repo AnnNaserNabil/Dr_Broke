@@ -1,124 +1,22 @@
 import streamlit as st
-import json
-from datetime import datetime
-from typing import Dict, Any
-import requests
 import logging
-
-# MUST be the first Streamlit command
-st.set_page_config(page_title="🧠 LeetCode Code Reviewer", page_icon="🧠", layout="wide")
-
+from datetime import datetime
 from agno.agent import Agent
 from agno.models.google import Gemini
 
-# Setup logging
+# Streamlit Page Config
+st.set_page_config(page_title="🧠 LeetCode Code Reviewer", page_icon="🧠", layout="wide")
+
+# Logging setup
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
-# Get API keys securely from Streamlit secrets
+# Get secrets
 gemini_api_key = st.secrets.get("GEMINI_API_KEY")
-google_docs_api_key = st.secrets.get("GOOGLE_DOCS_API_KEY")
-google_doc_id = st.secrets.get("GOOGLE_DOC_ID")  # The ID of your target Google Doc
 
-class GoogleDocsMCPServer:
-    """MCP Server for Google Docs integration"""
-    
-    def __init__(self, api_key: str, doc_id: str):
-        self.api_key = api_key
-        self.doc_id = doc_id
-        self.base_url = "https://docs.googleapis.com/v1/documents"
-        
-    def append_to_document(self, content: str) -> bool:
-        """Append content to the Google Doc"""
-        try:
-            # First, get the document to find the end index
-            get_url = f"{self.base_url}/{self.doc_id}"
-            headers = {
-                "Authorization": f"Bearer {self.api_key}",
-                "Content-Type": "application/json"
-            }
-            
-            response = requests.get(get_url, headers=headers)
-            if response.status_code != 200:
-                logger.error(f"Failed to get document: {response.text}")
-                return False
-                
-            doc_data = response.json()
-            end_index = doc_data['body']['content'][-1]['endIndex'] - 1
-            
-            # Prepare the batch update request
-            update_url = f"{self.base_url}/{self.doc_id}:batchUpdate"
-            
-            requests_payload = [
-                {
-                    "insertText": {
-                        "location": {"index": end_index},
-                        "text": content
-                    }
-                }
-            ]
-            
-            payload = {"requests": requests_payload}
-            
-            response = requests.post(update_url, headers=headers, json=payload)
-            
-            if response.status_code == 200:
-                return True
-            else:
-                logger.error(f"Failed to update document: {response.text}")
-                return False
-                
-        except Exception as e:
-            logger.error(f"Error appending to Google Doc: {str(e)}")
-            return False
-    
-    def save_review_session(self, session_data: Dict[str, Any]) -> bool:
-        """Save a complete review session to Google Doc"""
-        try:
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            
-            content = f"""
-{'='*80}
-🧠 LEETCODE CODE REVIEW SESSION - {timestamp}
-{'='*80}
-
-📋 PROBLEM STATEMENT:
-{session_data['problem']}
-
-💻 SUBMITTED CODE ({session_data['language']}):
-```{session_data['language'].lower()}
-{session_data['code']}
-```
-
-🏷️ DIFFICULTY: {session_data['difficulty']}
-
-{'='*50} AI ANALYSIS {'='*50}
-
-🔍 CODE EVALUATION:
-{session_data['evaluation']}
-
-⚖️ JUDGEMENT VERDICT:
-{session_data['judgement']}
-
-🕵️ CRITIC ANALYSIS:
-{session_data['criticism']}
-
-🚀 IMPROVED SOLUTION:
-{session_data['improvement']}
-
-📖 CODE EXPLANATION:
-{session_data['explanation']}
-
-{'='*80}
-END OF SESSION
-{'='*80}
-
-"""
-            return self.append_to_document(content)
-            
-        except Exception as e:
-            logger.error(f"Error saving review session: {str(e)}")
-            return False
+# Initialize history if not exists
+if 'review_history' not in st.session_state:
+    st.session_state.review_history = []
 
 # Agent Initializer
 def initialize_evaluator_agents(api_key: str) -> tuple:
@@ -206,7 +104,7 @@ def initialize_evaluator_agents(api_key: str) -> tuple:
         return None, None, None, None, None
 
 
-# Sidebar
+# Sidebar Developer Info
 st.sidebar.markdown("## 👨‍💻 Developed By")
 st.sidebar.image("https://avatars.githubusercontent.com/u/16422192?s=400", width=100)
 st.sidebar.markdown("""
@@ -220,27 +118,17 @@ _AI Engineer & Creative Technologist_
 _"Build smarter agents for better solutions."_
 """, unsafe_allow_html=True)
 
-# Google Docs Integration Section
-st.sidebar.markdown("---")
-st.sidebar.markdown("## 📄 Google Docs Integration")
-save_to_docs = st.sidebar.checkbox("💾 Save to Google Docs", value=True)
-if save_to_docs:
-    if google_docs_api_key and google_doc_id:
-        st.sidebar.success("✅ Google Docs configured")
-    else:
-        st.sidebar.error("❌ Missing Google Docs configuration")
-        st.sidebar.markdown("Add `GOOGLE_DOCS_API_KEY` and `GOOGLE_DOC_ID` to secrets")
-
 # Header
 st.title("🧠 LeetCode Code Reviewer")
 st.markdown("### Upload your solved LeetCode problem & get AI reviews")
 
-# Input
+# Input Fields
 st.text_area("📝 Problem Statement", key="problem", height=200, placeholder="Paste the full problem statement here.")
 st.text_area("💻 Your Code", key="code", height=250, placeholder="Paste your code here.")
 language = st.selectbox("Preferred Language", ["Python", "Java", "C++", "JavaScript"])
 difficulty = st.selectbox("Difficulty Level", ["Easy", "Medium", "Hard", "Unknown"])
 
+# Run Button
 if st.button("🚀 Review My Code", type="primary"):
     user_problem = st.session_state.problem.strip()
     user_code = st.session_state.code.strip()
@@ -254,9 +142,9 @@ if st.button("🚀 Review My Code", type="primary"):
 
         if all([code_evaluator, code_judge, code_critic, code_improver, code_explainer]):
             full_context = f"Problem:\n{user_problem}\n\nCode:\n```{language}\n{user_code}\n```"
-            
-            # Initialize session data for Google Docs
+
             session_data = {
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "problem": user_problem,
                 "code": user_code,
                 "language": language,
@@ -298,20 +186,24 @@ if st.button("🚀 Review My Code", type="primary"):
                 st.markdown(explainer_response.content)
                 session_data["explanation"] = explainer_response.content
 
-            # Save to Google Docs if enabled
-            if save_to_docs and google_docs_api_key and google_doc_id:
-                with st.spinner("💾 Saving to Google Docs..."):
-                    try:
-                        mcp_server = GoogleDocsMCPServer(google_docs_api_key, google_doc_id)
-                        if mcp_server.save_review_session(session_data):
-                            st.success("✅ Successfully saved review session to Google Docs!")
-                        else:
-                            st.error("❌ Failed to save to Google Docs. Check your configuration.")
-                    except Exception as e:
-                        st.error(f"❌ Error saving to Google Docs: {str(e)}")
+            # Save to session history
+            st.session_state.review_history.append(session_data)
 
         else:
             st.error("⚠️ Failed to initialize agents. Please check your configuration.")
+
+# Display Review History
+if st.session_state.review_history:
+    st.markdown("## 📚 Previous Review Sessions")
+    for session in reversed(st.session_state.review_history):
+        with st.expander(f"🧠 Review at {session['timestamp']} — {session['language']} | {session['difficulty']}"):
+            st.markdown(f"### 📋 Problem Statement\n{session['problem']}")
+            st.markdown(f"### 💻 Submitted Code\n```{session['language'].lower()}\n{session['code']}\n```")
+            st.markdown(f"### 🔍 Code Evaluation\n{session['evaluation']}")
+            st.markdown(f"### ⚖️ Judgement Verdict\n{session['judgement']}")
+            st.markdown(f"### 🕵️ Critic Analysis\n{session['criticism']}")
+            st.markdown(f"### 🚀 Improved Solution\n{session['improvement']}")
+            st.markdown(f"### 📖 Code Explanation\n{session['explanation']}")
 
 # Footer
 st.markdown("---")
@@ -319,6 +211,6 @@ st.markdown("""
 <div style='text-align: center; color: gray'>
     <p>Made with ❤️ by <b>Ann Naser Nabil</b></p>
     <p>🧠 Master Problem Solving with AI Agents</p>
-    <p>💾 All sessions automatically saved to Google Docs</p>
+    <p>📚 Review history is saved during this session</p>
 </div>
 """, unsafe_allow_html=True)

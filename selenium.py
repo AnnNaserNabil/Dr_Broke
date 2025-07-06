@@ -68,15 +68,16 @@ st.sidebar.markdown("""
 
 # Main UI
 st.title("🕷️ AI-Powered Selenium Scraper Builder")
-st.markdown("### Upload a `.txt` file or paste the HTML source, and describe your scraping goal.")
+st.markdown("### Upload a `.html` or `.txt` file, or paste the HTML source, and describe your scraping goal.")
 
-uploaded_file = st.file_uploader("📄 Upload Website Source Code (.txt)", type=["txt"])
+uploaded_file = st.file_uploader("📄 Upload Website Source Code (.html or .txt)", type=["txt", "html"])
 
 source_html = ""
 if uploaded_file is not None:
     try:
-        source_html = uploaded_file.read().decode("utf-8")
-        st.success("✅ File uploaded and loaded successfully.")
+        file_bytes = uploaded_file.read()
+        source_html = file_bytes.decode("utf-8", errors="ignore")
+        st.success(f"✅ File '{uploaded_file.name}' uploaded and processed successfully.")
     except Exception as e:
         st.error(f"❌ Error reading file: {str(e)}")
 
@@ -112,7 +113,7 @@ URL (optional): {url_sample if url_sample else 'N/A'}
                 
                 session_data = {
                     "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "source": source_html[:1000],  # Truncate for size
+                    "source": source_html[:1000],  # Truncate to avoid overload
                     "goal": scrape_goal,
                     "url": url_sample,
                     "result": result

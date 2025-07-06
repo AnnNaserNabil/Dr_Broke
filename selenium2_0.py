@@ -37,7 +37,7 @@ if "scraper_history" not in st.session_state:
 # Agent Initialization
 def initialize_scraper_agent(api_key: str) -> Agent:
     try:
-        model = Gemini(id="gemini-2.0-pro", api_key=api_key)
+        model = Gemini(id="gemini-2.0-flash", api_key=api_key)
         return Agent(
             model=model,
             name="Smart Scraper Agent",

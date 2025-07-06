@@ -1,4 +1,3 @@
-
 import streamlit as st
 import logging
 import os
@@ -7,12 +6,11 @@ from datetime import datetime
 from agno.agent import Agent
 from agno.models.google import Gemini
 
-# ... (all previous imports remain the same)
 # Constants
 SAVE_FILE = "sessions/scraper_history.json"
 
 # Streamlit Page Config
-st.set_page_config(page_title="🕷️ Selenium Scraper Builder", page_icon="🕷️", layout="wide")
+st.set_page_config(page_title="🕷️ AI Scraper Builder", page_icon="🕷️", layout="wide")
 
 # Logging
 logging.basicConfig(level=logging.ERROR)
@@ -21,7 +19,7 @@ logger = logging.getLogger(__name__)
 # API Key
 gemini_api_key = st.secrets.get("GEMINI_API_KEY")
 
-# Load/Save Functions (no change)
+# Load/Save Functions
 def save_scraper_history(history):
     os.makedirs("sessions", exist_ok=True)
     with open(SAVE_FILE, "w") as f:
@@ -36,37 +34,37 @@ def load_scraper_history():
 if "scraper_history" not in st.session_state:
     st.session_state.scraper_history = load_scraper_history()
 
-# Initialize Scraper Agent
+# Agent Initialization
 def initialize_scraper_agent(api_key: str) -> Agent:
     try:
-        model = Gemini(id="gemini-2.0-flash", api_key=api_key)
-        agent = Agent(
+        model = Gemini(id="gemini-2.0-pro", api_key=api_key)
+        return Agent(
             model=model,
-            name="Scraper Agent",
+            name="Smart Scraper Agent",
             instructions=[
-                "You are an expert web scraper builder using Python and Selenium.",
-                "You will receive a goal and HTML source code (either full or partial).",
-                "Follow these steps strictly when replying:",
+                "You are an expert web scraper generator using Python + Selenium.",
+                "You'll be given HTML (or a webpage dump) and a user-described goal.",
+                "Your task is to understand what the user wants, identify correct DOM elements, and write a working scraper.",
                 "",
-                "**1. Analyze Structure**: Read the HTML input and understand the DOM tree structure.",
-                "**2. Locate Elements**: Identify which tags or classes/IDs to target to extract user-specified content (like links, product names, etc).",
-                "**3. Extract Using Selenium**: Generate robust Python code using Selenium to extract the required elements.",
-                "**4. Use Best Practices**: Handle dynamic content, page loads, and edge cases where needed.",
+                "**Always do the following:**",
+                "1. Identify the target elements (e.g., links, prices, titles, etc.) even if not explicitly mentioned.",
+                "2. Analyze the HTML and suggest the best tag/class/ID selectors.",
+                "3. Generate clean Selenium code. Use BeautifulSoup optionally.",
                 "",
-                "Return your output in this format:",
-                "### 📋 Scraping Plan\nExplain DOM targets and logic.",
-                "### 🔧 Selenium Code\nFull working script using Selenium (use BeautifulSoup optionally).",
-                "### ⚠️ Notes\nMention JS rendering issues, login requirements, or alternatives if any."
+                "**Output Format:**",
+                "### 🧠 Inferred Task\nSummarize the user's goal and target elements.",
+                "### 📋 Scraping Plan\nExplain your approach to selecting DOM elements.",
+                "### 🔧 Selenium Code\nFull working Python code using Selenium.",
+                "### ⚠️ Notes\nMention any JS rendering issues, login needs, or site-specific tricks."
             ],
             markdown=True
         )
-        return agent
     except Exception as e:
-        st.error(f"❌ Error initializing agent: {str(e)}")
+        st.error(f"❌ Agent init failed: {str(e)}")
         return None
 
-# Sidebar — unchanged
-st.sidebar.markdown("## 🔧 Built by Ann Naser Nabil")
+# Sidebar
+st.sidebar.markdown("## 🧠 Built by Ann Naser Nabil")
 st.sidebar.image("https://avatars.githubusercontent.com/u/16422192?s=400", width=100)
 st.sidebar.markdown("""
 **AI Engineer & Web Automator**  
@@ -77,90 +75,38 @@ st.sidebar.markdown("""
 
 # Main Interface
 st.title("🕷️ AI-Powered Selenium Scraper Builder")
-st.markdown("### Upload a `.html` or `.txt` file, or paste the HTML source, and describe your scraping goal.")
+st.markdown("Upload `.html` or `.txt` source, or paste HTML/DOM — describe your scraping goal and let AI do the rest!")
 
-uploaded_file = st.file_uploader("📄 Upload Website Source Code (.html or .txt)", type=["txt", "html"])
+uploaded_file = st.file_uploader("📄 Upload Website Source Code", type=["html", "txt"])
 
 source_html = ""
-if uploaded_file is not None:
+if uploaded_file:
     try:
-        file_bytes = uploaded_file.read()
-        source_html = file_bytes.decode("utf-8", errors="ignore")
-        st.success(f"✅ File '{uploaded_file.name}' uploaded and processed successfully.")
+        source_html = uploaded_file.read().decode("utf-8", errors="ignore")
+        st.success(f"✅ Loaded: {uploaded_file.name}")
     except Exception as e:
-        st.error(f"❌ Error reading file: {str(e)}")
+        st.error(f"❌ Could not read file: {e}")
 
-# Fallback to manual input
+# Manual input fallback
 if not source_html:
-    source_html = st.text_area("🌐 Or Paste Website Source Code", height=200, placeholder="Paste HTML source or visible DOM content here.")
+    source_html = st.text_area("🌐 Or Paste HTML/Visible DOM", height=200, placeholder="Paste raw HTML or page source here...")
 
-# Text input for goal
-scrape_goal = st.text_area("🎯 What do you want to scrape?", height=150, placeholder="e.g., Extract all product names and prices.")
+# Free-form goal input
+scrape_goal = st.text_area("🎯 What do you want to scrape?", height=150, placeholder="e.g., I want product names, prices and ratings from this page.")
 
-# Element selection
-element_types = st.multiselect(
-    "🔍 What type(s) of elements do you want to scrape?",
-    ["Links (anchor tags)", "Text content", "Images", "Buttons", "Tables", "Lists"],
-    default=["Links (anchor tags)", "Text content"]
-)
-
+# Optional: sample URL
 url_sample = st.text_input("🔗 Sample URL (optional)", placeholder="https://example.com/products")
 
-if st.button("🛠️ Build Scraper", type="primary"):
+# Build Scraper
+if st.button("🛠️ Build Smart Scraper", type="primary"):
     if not gemini_api_key:
-        st.error("❌ Gemini API Key not found in secrets.")
+        st.error("❌ Gemini API Key is missing.")
     elif not source_html or not scrape_goal:
-        st.warning("Please provide both source code and scraping instructions.")
+        st.warning("⚠️ Please provide both HTML content and a scraping goal.")
     else:
-        scraper_agent = initialize_scraper_agent(gemini_api_key)
+        agent = initialize_scraper_agent(gemini_api_key)
+        if agent:
+            full_prompt = f"""
+You are a Selenium scraper builder.
 
-        if scraper_agent:
-            elements_str = ", ".join(element_types)
-            full_prompt = f"""You're building a Selenium scraper.
-URL (optional): {url_sample if url_sample else 'N/A'}
-
-🧩 HTML Source:
-{source_html}
-
-🎯 Goal:
-{scrape_goal}
-
-🔍 Elements to scrape: {elements_str}
-"""
-            with st.spinner("🤖 Thinking and building scraper..."):
-                result = scraper_agent.run(message=full_prompt).content
-                st.subheader("📦 Generated Scraper")
-                st.markdown(result)
-
-                session_data = {
-                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "source": source_html[:1000],
-                    "goal": scrape_goal,
-                    "url": url_sample,
-                    "result": result
-                }
-                st.session_state.scraper_history.append(session_data)
-                save_scraper_history(st.session_state.scraper_history)
-        else:
-            st.error("⚠️ Agent initialization failed.")
-
-# Past Sessions
-if st.button("📂 Load Saved Sessions"):
-    st.session_state.scraper_history = load_scraper_history()
-    st.success("Loaded saved scraper sessions.")
-
-if st.session_state.scraper_history:
-    st.markdown("## 🕰️ Previous Scraper Sessions")
-    for session in reversed(st.session_state.scraper_history):
-        with st.expander(f"📁 {session['timestamp']} — Goal: {session['goal'][:40]}..."):
-            st.markdown(f"### 🔗 URL (if provided):\n{session['url']}")
-            st.markdown(f"### 🌐 Source Snippet\n```html\n{session['source']}\n```")
-            st.markdown(f"### 📋 Generated Code\n{session['result']}")
-
-# Footer
-st.markdown("---")
-st.markdown("""
-<div style='text-align: center; color: gray'>
-    <p>Built with 🧠 for fast automation by <b>Ann Naser Nabil</b></p>
-</div>
-""", unsafe_allow_html=True)
+Here is the page's raw HTML or DOM:

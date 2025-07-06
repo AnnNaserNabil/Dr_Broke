@@ -16,7 +16,7 @@ st.set_page_config(page_title="🕷️ Selenium Scraper Builder", page_icon="�
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
-# Get API key
+# API Key
 gemini_api_key = st.secrets.get("GEMINI_API_KEY")
 
 # Load/Save Session Functions
@@ -37,7 +37,7 @@ if "scraper_history" not in st.session_state:
 # Initialize Agent
 def initialize_scraper_agent(api_key: str) -> Agent:
     try:
-        model = Gemini(id="gemini-2.0-pro", api_key=api_key)
+        model = Gemini(id="gemini-2.0-flash", api_key=api_key)
         agent = Agent(
             model=model,
             name="Scraper Agent",
@@ -68,11 +68,23 @@ st.sidebar.markdown("""
 
 # Main UI
 st.title("🕷️ AI-Powered Selenium Scraper Builder")
-st.markdown("### Paste the webpage source and describe your scraping goal.")
+st.markdown("### Upload a `.txt` file or paste the HTML source, and describe your scraping goal.")
 
-source_html = st.text_area("🌐 Website Source Code", height=200, placeholder="Paste HTML source or visible DOM content here.")
+uploaded_file = st.file_uploader("📄 Upload Website Source Code (.txt)", type=["txt"])
+
+source_html = ""
+if uploaded_file is not None:
+    try:
+        source_html = uploaded_file.read().decode("utf-8")
+        st.success("✅ File uploaded and loaded successfully.")
+    except Exception as e:
+        st.error(f"❌ Error reading file: {str(e)}")
+
+# Fallback to manual input if file not provided
+if not source_html:
+    source_html = st.text_area("🌐 Or Paste Website Source Code", height=200, placeholder="Paste HTML source or visible DOM content here.")
+
 scrape_goal = st.text_area("🎯 What do you want to scrape?", height=150, placeholder="e.g., Extract all product names and prices.")
-
 url_sample = st.text_input("🔗 Sample URL (optional)", placeholder="https://example.com/products")
 
 if st.button("🛠️ Build Scraper", type="primary"):
@@ -100,7 +112,7 @@ URL (optional): {url_sample if url_sample else 'N/A'}
                 
                 session_data = {
                     "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "source": source_html,
+                    "source": source_html[:1000],  # Truncate for size
                     "goal": scrape_goal,
                     "url": url_sample,
                     "result": result
@@ -120,7 +132,7 @@ if st.session_state.scraper_history:
     for session in reversed(st.session_state.scraper_history):
         with st.expander(f"📁 {session['timestamp']} — Goal: {session['goal'][:40]}..."):
             st.markdown(f"### 🔗 URL (if provided):\n{session['url']}")
-            st.markdown(f"### 🌐 Source Snippet\n```html\n{session['source'][:500]}...\n```")
+            st.markdown(f"### 🌐 Source Snippet\n```html\n{session['source']}\n```")
             st.markdown(f"### 📋 Generated Code\n{session['result']}")
 
 # Footer
